@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controlled Timer</title>
+  <style>
+     .body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #timer {
+      font-size: 3em;
+      text-align: center;
+      padding-right: 20px;
+      margin: 40px auto;
+    }
+
+    #controls {
+      text-align: center;
+    }
+
+    input {
+      font-size: 1em;
+      padding: 5px;
+      width: 50px;
+      text-align: center;
+    }
+
+    button {
+      font-size: 1.5em;
+      padding: 10px;
+      cursor: pointer;
+      margin: 5px;
+      border-radius: 4cm;
+    }
+
+    button:hover{
+      background-color: lightblue;
+    }
+  </style>
+</head>
+
+<body>
+  <h1 style="text-align: center;">Timer clock</h1>
+
+  <div id="timer">00:00:00</div>
+
+  <div class="">
+    
+
+    <div id="controls">
+      <label for="hoursInput">Hours: </label>
+      <input type="number" id="hoursInput" min="0" max="24" value="0">
+      <label for="minutesInput">Minutes: </label>
+      <input type="number" id="minutesInput" min="0" max="59" value="20">
+      <label for="secondsInput">Seconds: </label>
+      <input type="number" id="secondsInput" min="0" max="59" value="0">
+      <button onclick="startTimer()">Start</button>
+      <button onclick="pauseTimer()">Pause</button>
+      <button onclick="resetTimer()">Reset</button>
+    </div>
+  </div>
+  <script>
+    let timer;
+    let totalSeconds = 30;
+    let secondsLeft = totalSeconds;
+    let isTimerRunning = false;
+
+    function updateTimerDisplay() {
+      const hours = Math.floor(secondsLeft / 3600);
+      const minutes = Math.floor((secondsLeft % 3600) / 60);
+      const seconds = secondsLeft % 60;
+      document.getElementById('timer').innerText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+      if (!isTimerRunning) {
+        const hours = parseInt(document.getElementById('hoursInput').value, 10) || 0;
+        const minutes = parseInt(document.getElementById('minutesInput').value, 10) || 0;
+        const seconds = parseInt(document.getElementById('secondsInput').value, 10) || 0;
+        totalSeconds = hours * 3600 + minutes * 60 + seconds;
+        secondsLeft = totalSeconds;
+        updateTimerDisplay();
+
+        timer = setInterval(function () {
+          if (secondsLeft > 0) {
+            secondsLeft--;
+            updateTimerDisplay();
+          } else {
+            clearInterval(timer);
+            isTimerRunning = false;
+            playBeepSound();
+          }
+        }, 1000);
+
+        isTimerRunning = true;
+      }
+    }
+
+    function pauseTimer() {
+      clearInterval(timer);
+      isTimerRunning = false;
+    }
+
+    function resetTimer() {
+      clearInterval(timer);
+      isTimerRunning = false;
+      totalSeconds = (parseInt(document.getElementById('hoursInput').value, 10) || 0) * 3600 +
+        (parseInt(document.getElementById('minutesInput').value, 10) || 0) * 60 +
+        (parseInt(document.getElementById('secondsInput').value, 10) || 0);
+      secondsLeft = totalSeconds;
+      updateTimerDisplay();
+    }
+
+    function playBeepSound() {
+      const beep = new Audio('./beep.mp3');
+      beep.play();
+    }
+  </script>
+
+</body>
+
+</html>
